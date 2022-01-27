@@ -14,6 +14,10 @@ class Customer {
     this.notes = notes;
   }
 
+  fullName() {
+    return `${this.firstName} ${this.lastName}`
+  }
+
   /** find all customers. */
 
   static async all() {
@@ -51,6 +55,25 @@ class Customer {
     }
 
     return new Customer(customer);
+  }
+
+  async getByName(name){
+    if(name != undefined){
+      try{
+        const results = await db.query(
+          `SELECT 
+            first_name AS "firstName",  
+             last_name AS "lastName", 
+            FROM customers WHERE first_name = $1 or last_name = $1`, [name]
+        );
+      } catch {
+        const err = new Error(`No customers by the name of ${name}`)
+      }
+    } else {
+      const err = new Error(`Name is needed for search`)
+      err.status = 404
+      throw err;
+    }
   }
 
   /** get all reservations for this customer. */
