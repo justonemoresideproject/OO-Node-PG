@@ -57,14 +57,14 @@ class Customer {
     return new Customer(customer);
   }
 
-  async getByName(name){
+  static async getByName(name){
     if(name != undefined){
       try{
         const results = await db.query(
           `SELECT 
             first_name AS "firstName",  
-             last_name AS "lastName", 
-            FROM customers WHERE first_name = $1 or last_name = $1`, [name]
+             last_name AS "lastName" 
+            FROM customers WHERE first_name LIKE $1 OR last_name LIKE $1`, [name]
         );
       } catch {
         const err = new Error(`No customers by the name of ${name}`)

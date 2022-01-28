@@ -7,6 +7,7 @@ const Reservation = require("./models/reservation");
 
 const router = new express.Router();
 
+
 /** Homepage: show list of customers. */
 
 router.get("/", async function(req, res, next) {
@@ -45,6 +46,21 @@ router.post("/add/", async function(req, res, next) {
     return next(err);
   }
 });
+
+/** Handles finding customers */
+
+router.get("/search", async function(req, res, next) {
+  try {
+    let name = req.query["name"]
+    const customers = await customer.getByName(name)
+
+    return res.render('customer_search.html', customers=customers)
+    // return res.render('customer_search.html', { name })
+    // return res.redirect('/')
+  } catch(err) {
+    return next(err);
+  }
+})
 
 /** Show a customer, given their ID. */
 
@@ -111,18 +127,5 @@ router.post("/:id/add-reservation/", async function(req, res, next) {
     return next(err);
   }
 });
-
-/** Handles finding customers */
-
-router.get("/search", async function(req, res, next) {
-  try {
-    const name = req.params.name
-    const customers = await customer.getByName(`${name}`)
-
-    return res.render('customer_search.html', customers=customers)
-  } catch(err) {
-    return next(err);
-  }
-})
 
 module.exports = router;
